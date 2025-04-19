@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entofold - DeepTech İnovasyonu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f7f9fc;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #34e7e4 0%, #7f7fd5 100%);
+            height: 100vh;
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);
+            position: absolute;
+            width: 100%;
+            z-index: -1;
+            opacity: 0.8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            padding: 30px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 50px;
+        }
+        
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a365d;
+            margin-left: 10px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: #1a365d;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        nav ul li a:hover {
+            color: #5a67d8;
+        }
+        
+        .hero {
+            height: 80vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hero-content {
+            max-width: 600px;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #1a365d;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #2d3748;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #34e7e4 0%, #7f7fd5 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(127, 127, 213, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(127, 127, 213, 0.6);
+        }
+        
+        .features {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 60px;
+            color: #1a365d;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #34e7e4 0%, #7f7fd5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #1a365d;
+        }
+        
+        .cta {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(52, 231, 228, 0.1) 0%, rgba(127, 127, 213, 0.1) 100%);
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #1a365d;
+        }
+        
+        .cta p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            color: #2d3748;
+        }
+        
+        footer {
+            background-color: #1a365d;
+            color: white;
+            padding: 50px 0;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .footer-logo {
+            margin-bottom: 20px;
+        }
+        
+        .footer-logo img {
+            height: 40px;
+        }
+        
+        .footer-links h4 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links ul li a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links ul li a:hover {
+            color: #34e7e4;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            color: #cbd5e0;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            nav {
+                display: none;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .footer-links {
+                margin-top: 30px;
+            }
+        }
+        
+        /* Logo animation */
+        .logo-icon {
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+        
+        .logo-fold {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .fold-1 {
+            background: #34e7e4;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            animation: fold1 5s infinite alternate;
+        }
+        
+        .fold-2 {
+            background: #a65fec;
+            clip-path: polygon(25% 25%, 75% 25%, 50% 100%);
+            animation: fold2 5s infinite alternate;
+        }
+        
+        .fold-3 {
+            background: #7f7fd5;
+            clip-path: polygon(37.5% 37.5%, 62.5% 37.5%, 50% 100%);
+            animation: fold3 5s infinite alternate;
+        }
+        
+        @keyframes fold1 {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-5px); }
+        }
+        
+        @keyframes fold2 {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-3px); }
+        }
+        
+        @keyframes fold3 {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-1px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <div class="logo-fold fold-1"></div>
+                    <div class="logo-fold fold-2"></div>
+                    <div class="logo-fold fold-3"></div>
+                </div>
+                <div class="logo-text">entofold</div>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="#anasayfa">Anasayfa</a></li>
+                    <li><a href="#teknoloji">Teknoloji</a></li>
+                    <li><a href="#hakkimizda">Hakkımızda</a></li>
+                    <li><a href="#iletisim">İletişim</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <section class="hero" id="anasayfa">
+            <div class="hero-content">
+                <h1>DeepTech İnovasyonuyla Geleceği Şekillendiriyoruz</h1>
+                <p>Entofold, yapay zeka ve veri bilimi teknolojilerini kullanarak işletmelere yeni nesil çözümler sunuyor. Katlanarak artan teknolojik gelişimlere adapte olun.</p>
+                <a href="#iletisim" class="btn">Bize Ulaşın</a>
+            </div>
+        </section>
+    </div>
+    
+    <section class="features" id="teknoloji">
+        <div class="container">
+            <h2 class="section-title">Teknolojilerimiz</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Yapay Zeka Çözümleri</h3>
+                    <p>İleri seviye makine öğrenmesi algoritmalarıyla veri analizi ve öngörüsel modelleme hizmetleri sunuyoruz.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>İşlem Otomasyonu</h3>
+                    <p>İş süreçlerinizi optimize eden ve insan hatasını minimize eden akıllı otomasyon sistemleri geliştiriyoruz.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Veri Görselleştirme</h3>
+                    <p>Karmaşık verileri anlaşılır görsellere dönüştürerek daha iyi iş kararları almanızı sağlıyoruz.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="cta" id="hakkimizda">
+        <div class="container">
+            <h2>Vizyonumuz</h2>
+            <p>Entofold olarak amacımız, en son teknolojik gelişmeleri kullanarak işletmelerin dijital dönüşümünü hızlandırmak ve rekabet avantajı sağlamaktır. Veri odaklı çözümlerimizle işletmenizi geleceğe taşıyoruz.</p>
+            <a href="#iletisim" class="btn">Daha Fazla Bilgi</a>
+        </div>
+    </section>
+    
+    <footer id="iletisim">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">
+                        <div class="logo-icon">
+                            <div class="logo-fold fold-1"></div>
+                            <div class="logo-fold fold-2"></div>
+                            <div class="logo-fold fold-3"></div>
+                        </div>
+                    </div>
+                    <p>DeepTech çözümleriyle işletmenizi dönüştürün.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>İletişim</h4>
+                    <ul>
+                        <li>Email: info@entofold.com</li>
+                        <li>Telefon: +90 212 123 4567</li>
+                        <li>Adres: Teknopark, İstanbul</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Bağlantılar</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Kariyer</a></li>
+                        <li><a href="#">Gizlilik Politikası</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Entofold. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
