@@ -1,6 +1,7 @@
-// Admin product CRUD using localStorage as working copy
+// Admin product CRUD using localStorage as working copy, with a friendlier form UI
 
 const ADMIN_PRODUCTS_KEY = "3dprint_admin_products_draft";
+let currentProductEditIndex = null;
 
 async function loadBaseProductsForAdmin() {
   try {
@@ -36,6 +37,50 @@ function generateProductCode(lastNumericId) {
   return `FD-${num}`;
 }
 
+function openProductForm(mode, product, codePreview) {
+  const panel = document.getElementById("adminProductFormPanel");
+  if (!panel) return;
+  panel.classList.remove("hidden");
+
+  const titleEl = document.getElementById("adminProductFormTitle");
+  if (titleEl) {
+    titleEl.textContent =
+      mode === "edit" ? "Ürünü Düzenle" : "Yeni Ürün Ekle";
+  }
+
+  // Fill form fields
+  document.getElementById("apName").value = product?.name || "";
+  document.getElementById("apCategory").value = product?.category || "";
+  document.getElementById("apStockStatus").value =
+    product?.stockStatus || "made_to_order";
+  document.getElementById("apFilament").value =
+    product?.filamentType || "PLA";
+  document.getElementById("apEstimatedTime").value =
+    product?.estimatedPrintTime || "";
+  document.getElementById("apImagePath").value =
+    (Array.isArray(product?.imagePaths)
+      ? product.imagePaths[0]
+      : product?.imagePath) || "";
+  document.getElementById("apColors").value = Array.isArray(
+    product?.colorOptions
+  )
+    ? product.colorOptions.join(", ")
+    : "";
+  document.getElementById("apUsageNotes").value =
+    product?.usageNotes || "";
+
+  const codeLabel = document.getElementById("apCodePreview");
+  if (codeLabel) {
+    codeLabel.textContent = codePreview || product?.code || "-";
+  }
+}
+
+function closeProductForm() {
+  const panel = document.getElementById("adminProductFormPanel");
+  if (panel) panel.classList.add("hidden");
+  currentProductEditIndex = null;
+}
+
 async function renderAdminProductsSection() {
   const root = document.getElementById("adminProductsRoot");
   if (!root) return;
@@ -58,13 +103,67 @@ async function renderAdminProductsSection() {
           <th>Kod</th>
           <th>İsim</th>
           <th>Kategori</th>
-          <th>Fiyat</th>
           <th>Stok</th>
           <th></th>
         </tr>
       </thead>
       <tbody id="adminProductsTbody"></tbody>
     </table>
+    <section id="adminProductFormPanel" class="admin-product-form hidden">
+      <div class="admin-product-form-header">
+        <h2 id="adminProductFormTitle">Yeni Ürün Ekle</h2>
+        <button type="button" class="icon-button" id="apCloseBtn" aria-label="Formu kapat">✕</button>
+      </div>
+      <form id="adminProductForm" class="form-grid">
+        <div class="field">
+          <label for="apName">Ürün Adı</label>
+          <input id="apName" required />
+        </div>
+        <div class="field">
+          <label for="apCategory">Kategori</label>
+          <input id="apCategory" placeholder="Örn: Masaüstü Aksesuar" />
+        </div>
+        <div class="field">
+          <label for="apStockStatus">Stok Durumu</label>
+          <select id="apStockStatus">
+            <option value="in_stock">Stokta</option>
+            <option value="made_to_order">Sipariş Üzerine</option>
+            <option value="out_of_stock">Tükendi</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="apFilament">Filament Türü</label>
+          <select id="apFilament">
+            <option value="PLA">PLA</option>
+            <option value="PETG">PETG</option>
+            <option value="ABS">ABS</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="apEstimatedTime">Tahmini Baskı Süresi</label>
+          <input id="apEstimatedTime" placeholder="Örn: 3 saat" />
+        </div>
+        <div class="field">
+          <label for="apImagePath">Ana Görsel Yolu</label>
+          <input id="apImagePath" placeholder="images/products/..." />
+        </div>
+        <div class="field full-width">
+          <label for="apColors">Renk Seçenekleri (virgülle ayır)</label>
+          <input id="apColors" placeholder="Siyah, Beyaz, Kırmızı" />
+        </div>
+        <div class="field full-width">
+          <label for="apUsageNotes">Kullanım Notları</label>
+          <textarea id="apUsageNotes" rows="2"></textarea>
+        </div>
+        <div class="small muted full-width">
+          Ürün kodu: <strong id="apCodePreview">-</strong> (otomatik oluşturulur)
+        </div>
+        <div class="actions full-width">
+          <button type="submit" class="btn primary small">Kaydet</button>
+          <button type="button" class="btn ghost small" id="apCancelBtn">Vazgeç</button>
+        </div>
+      </form>
+    </section>
   `;
 
   root.innerHTML = "";
@@ -77,7 +176,6 @@ async function renderAdminProductsSection() {
       <td>${p.code || ""}</td>
       <td>${p.name || ""}</td>
       <td>${p.category || ""}</td>
-      <td>${p.price || ""}</td>
       <td>${p.stockStatus || ""}</td>
       <td>
         <button type="button" class="btn ghost small" data-action="edit" data-idx="${idx}">Düzenle</button>
@@ -104,52 +202,24 @@ async function renderAdminProductsSection() {
       await saveAdminProducts(list);
       renderAdminProductsSection();
     } else if (action === "edit") {
+      currentProductEditIndex = index;
       const current = list[index];
-      const newName = prompt("Ürün adı:", current.name || "");
-      if (newName === null) return;
-      current.name = newName;
-      await saveAdminProducts(list);
-      renderAdminProductsSection();
+      openProductForm("edit", current);
     }
   });
 
   document
     .getElementById("addProductBtn")
     ?.addEventListener("click", async () => {
-      let list = await getAdminProducts();
+      const list = await getAdminProducts();
       const lastId = list.reduce(
         (max, p) => Math.max(max, Number(p.id) || 0),
         0
       );
       const newId = lastId + 1;
-      const name = prompt("Yeni ürün adı:");
-      if (!name) return;
-      const priceStr = prompt("Fiyat (TRY):", "0");
-      const price = Number(priceStr || "0");
-      const now = new Date().toISOString();
-      const product = {
-        id: String(newId),
-        code: generateProductCode(newId),
-        name,
-        description: "",
-        usageNotes: "",
-        category: "Genel",
-        price: price || 0,
-        currency: "TRY",
-        filamentType: "PLA",
-        colorOptions: [],
-        estimatedPrintTime: "",
-        stockStatus: "made_to_order",
-        imagePath: "",
-        whatsAppTemplate: `Merhaba, ${generateProductCode(
-          newId
-        )} kodlu *${name}* ürününü 3D baskı olarak sipariş etmek istiyorum.`,
-        createdAt: now,
-        updatedAt: now,
-      };
-      list.push(product);
-      await saveAdminProducts(list);
-      renderAdminProductsSection();
+      const code = generateProductCode(newId);
+      currentProductEditIndex = null;
+      openProductForm("create", null, code);
     });
 
   document
@@ -162,8 +232,106 @@ async function renderAdminProductsSection() {
       )
         return;
       localStorage.removeItem(ADMIN_PRODUCTS_KEY);
+      closeProductForm();
       renderAdminProductsSection();
     });
+
+  document.getElementById("apCloseBtn")?.addEventListener("click", () => {
+    closeProductForm();
+  });
+  document.getElementById("apCancelBtn")?.addEventListener("click", () => {
+    closeProductForm();
+  });
+
+  const form = document.getElementById("adminProductForm");
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("apName").value.trim();
+      if (!name) {
+        alert("Lütfen ürün adını girin.");
+        return;
+      }
+      const category = document
+        .getElementById("apCategory")
+        .value.trim();
+      const stockStatus =
+        document.getElementById("apStockStatus").value;
+      const filamentType =
+        document.getElementById("apFilament").value;
+      const estimatedPrintTime = document
+        .getElementById("apEstimatedTime")
+        .value.trim();
+      const imagePath = document
+        .getElementById("apImagePath")
+        .value.trim();
+      const colorsRaw = document
+        .getElementById("apColors")
+        .value.trim();
+      const usageNotes = document
+        .getElementById("apUsageNotes")
+        .value.trim();
+
+      let list = await getAdminProducts();
+      const now = new Date().toISOString();
+
+      if (currentProductEditIndex != null) {
+        const idx = currentProductEditIndex;
+        const existing = list[idx];
+        existing.name = name;
+        existing.category = category || existing.category;
+        existing.stockStatus = stockStatus;
+        existing.filamentType = filamentType;
+        existing.estimatedPrintTime = estimatedPrintTime;
+        existing.usageNotes = usageNotes;
+        existing.updatedAt = now;
+        if (imagePath) {
+          existing.imagePath = imagePath;
+          existing.imagePaths = [imagePath];
+        }
+        existing.colorOptions = colorsRaw
+          ? colorsRaw.split(",").map((c) => c.trim()).filter(Boolean)
+          : [];
+        await saveAdminProducts(list);
+      } else {
+        const lastId = list.reduce(
+          (max, p) => Math.max(max, Number(p.id) || 0),
+          0
+        );
+        const newId = lastId + 1;
+        const code = generateProductCode(newId);
+        const product = {
+          id: String(newId),
+          code,
+          name,
+          description: "",
+          usageNotes,
+          category: category || "Genel",
+          price: 0,
+          currency: "TRY",
+          filamentType,
+          colorOptions: colorsRaw
+            ? colorsRaw
+                .split(",")
+                .map((c) => c.trim())
+                .filter(Boolean)
+            : [],
+          estimatedPrintTime,
+          stockStatus,
+          imagePath: imagePath || "",
+          imagePaths: imagePath ? [imagePath] : [],
+          whatsAppTemplate: `Merhaba, ${code} kodlu *${name}* ürününü 3D baskı olarak sipariş etmek istiyorum.`,
+          createdAt: now,
+          updatedAt: now,
+        };
+        list.push(product);
+        await saveAdminProducts(list);
+      }
+
+      closeProductForm();
+      renderAdminProductsSection();
+    });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
