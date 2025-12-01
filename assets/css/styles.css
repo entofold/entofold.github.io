@@ -41,6 +41,8 @@ html,
 body {
   margin: 0;
   padding: 0;
+  /* Mobilde olası ufak taşmaları engellemek için */
+  overflow-x: hidden;
 }
 
 body {
@@ -841,6 +843,22 @@ main {
 @media (max-width: 768px) {
   .header-inner {
     padding-inline: 0;
+    flex-wrap: wrap;
+    row-gap: 0.4rem;
+  }
+
+  .main-nav {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .logo a {
+    padding-inline: 0.5rem;
+  }
+
+  .logo-mark {
+    width: 42px;
+    height: 42px;
   }
 
   .hero-text {
